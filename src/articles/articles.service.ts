@@ -4,11 +4,12 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class ArticlesService {
-  constructor(private prisma: PrismaService) {}
-  
+export class ArticlesService { // klasa ArticlesService z dekoratorem Injectable, który pozwala na wstrzykiwanie zależności
+  constructor(private prisma: PrismaService) {} // przekazanie serwisu PrismaService do konstruktora ArticlesService
+
   create(createArticleDto: CreateArticleDto) {
-    return 'This action adds a new article';
+    // return 'This action adds a new article';
+    return this.prisma.article.create({ data: createArticleDto });
   }
 
   findAll() {
@@ -16,15 +17,33 @@ export class ArticlesService {
     return this.prisma.article.findMany({ where: { published: true } });
   }
 
+  findDrafts() {
+    return this.prisma.article.findMany({ where: { published: false } });
+  }
+
   findOne(id: number) {
-    return `This action returns a #${id} article`;
+    // return `This action returns a #${id} article`;
+    return this.prisma.article.findUnique({ where: { id } });
   }
 
   update(id: number, updateArticleDto: UpdateArticleDto) {
-    return `This action updates a #${id} article`;
+    // return `This action updates a #${id} article`;
+    return this.prisma.article.update({
+      where: { id },
+      data: updateArticleDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} article`;
+    // return `This action removes a #${id} article`;
+    return this.prisma.article.delete({ where: { id } });
+  }
+
+  getFakeArticle() {
+    return [{
+      title: 'Fake article',
+      content: 'This is a fake article',
+      published: true,
+    }];
   }
 }
